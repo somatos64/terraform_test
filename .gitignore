@@ -1,0 +1,5 @@
+*/.terraform
+*/terraform.tfstate*
+notes.txt
+**/.DS_Store
+**/.terraform/*
