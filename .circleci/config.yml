@@ -15,6 +15,9 @@ jobs:
       - image: circleci/golang:latest
     steps:
         - checkout
+        - persist_to_workspace:
+              root: initial_s3
+              paths: .
   init:
     <<: *defaults
     steps:
