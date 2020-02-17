@@ -11,7 +11,7 @@ defaults: &defaults
 jobs:
   checkout:
     docker:
-      - image: circleci/circleci/golang:latest
+      - image: circleci/golang:latest
     steps:
         - checkout
   init:
