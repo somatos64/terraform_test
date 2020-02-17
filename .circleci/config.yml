@@ -15,8 +15,8 @@ jobs:
     steps:
         - checkout
         - run:
-          name: pwd
-          command: pwd
+            name: pwd
+            command: pwd
         - run:
             name: ls
             command: ls -la
