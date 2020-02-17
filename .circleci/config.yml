@@ -14,6 +14,15 @@ jobs:
       - image: circleci/golang:latest
     steps:
         - checkout
+        - run:
+          name: pwd
+          command: pwd
+        - run:
+            name: ls
+            command: ls -la
+        - run:
+            name: ls
+            command: ls -la initial_s3
         - persist_to_workspace:
               root: initial_s3
               paths: .
@@ -51,7 +60,13 @@ jobs:
           at: initial_s3
       - run:
           name: pwd
+          command: pwd
+      - run:
+          name: ls
           command: ls -la
+      - run:
+          name: ls
+          command: ls -la initial_s3
       - run:
           name: plan
           command: terraform plan -no-color -out=tfplan  -input=false
