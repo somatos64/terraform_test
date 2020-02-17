@@ -20,6 +20,8 @@ jobs:
   init:
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: initial_s3
       # - checkout
       # - run:
       #     name: gcp auth
