@@ -9,10 +9,13 @@ defaults: &defaults
     # AWS_SHARED_CREDENTIALS_FILE: aws-creds.json
 
 jobs:
+  checkout:
+    steps:
+        - checkout
   init:
     <<: *defaults
     steps:
-      - checkout
+      # - checkout
       # - run:
       #     name: gcp auth
       #     command: echo $AWS_ACCESS_KEY > aws-creds.json
