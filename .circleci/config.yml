@@ -28,7 +28,9 @@ jobs:
               paths: .
   init:
     <<: *defaults
+    working_directory: initial_s3
     steps:
+    
       - attach_workspace:
           at: initial_s3
       # - checkout
