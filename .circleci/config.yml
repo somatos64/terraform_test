@@ -24,11 +24,10 @@ jobs:
             name: ls
             command: ls -la initial_s3
         - persist_to_workspace:
-              root: initial_s3
+              root: /home/circleci/project/initial_s3
               paths: .
   init:
     <<: *defaults
-    working_directory: initial_s3
     steps:
     
       - attach_workspace:
