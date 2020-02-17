@@ -23,13 +23,6 @@ jobs:
     
       - attach_workspace:
           at: initial_s3
-      # - checkout
-      # - run:
-      #     name: gcp auth
-      #     command: echo $AWS_ACCESS_KEY > aws-creds.json
-      # - run:
-      #     name: gcp auth
-      #     command: echo $AWS_SECRET_KEY >> aws-creds.json
       - run:
           name: init
           command: >
@@ -44,19 +37,10 @@ jobs:
       - attach_workspace:
           at: initial_s3
       - run:
-          name: pwd
-          command: pwd
-      - run:
-          name: ls
-          command: ls -la
-      - run:
-          name: ls
-          command: ls -la initial_s3
-      - run:
           name: plan
           command: >
             cd initial_s3;
-            terraform plan -no-color -out=tfplan  -input=false
+            terraform plan -out=tfplan  -input=false
       - store_artifacts:
           path: initial_s3/tfplan
           destination: tfplan
@@ -68,9 +52,12 @@ jobs:
     steps:
       - attach_workspace:
           at: initial_s3
+      # - run:
+      #     name: apply
+      #     command: terraform apply -input=false -auto-approve tfplan
       - run:
-          name: apply
-          command: terraform apply -input=false -auto-approve tfplan
+          name: ls
+          command: pwd; ls -la; ls -la initial_s3
       - run:
           name: show
           command: terraform show -no-color > tfresult
@@ -92,10 +79,10 @@ workflows:
       - apply:
           requires:
             - plan
-          filters:
-            branches:
-              only: 
-                - master
+          # filters:
+          #   branches:
+          #     only: 
+          #       - master
 
       
       
