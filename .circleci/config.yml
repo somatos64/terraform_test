@@ -31,6 +31,12 @@ jobs:
           name: pwd
           command: pwd
       - run:
+          name: ls
+          command: ls -la
+      - run:
+          name: ls
+          command: ls -la initial_s3
+      - run:
           name: init
           command: terraform init -input=false
       - persist_to_workspace:
