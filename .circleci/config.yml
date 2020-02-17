@@ -1,13 +1,75 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
-version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+version: 2
+
+defaults: &defaults
+  working_directory: ~/initial_s3
+  docker:
+    - image: hashicorp/terraform:0.12.19
+  environment:
+    TF_IN_AUTOMATION: true
+    # AWS_SHARED_CREDENTIALS_FILE: aws-creds.json
+
+jobs:
+  init:
+    <<: *defaults
+    steps:
+      - checkout
+      # - run:
+      #     name: gcp auth
+      #     command: echo $AWS_ACCESS_KEY > aws-creds.json
+      # - run:
+      #     name: gcp auth
+      #     command: echo $AWS_SECRET_KEY >> aws-creds.json
+      - run:
+          name: init
+          command: terraform init -input=false
+      - persist_to_workspace:
+          root: ~/initial_s3
+          paths: .
+  plan:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/initial_s3
+      - run:
+          name: plan
+          command: terraform plan -no-color -out=tfplan  -input=false
+      - store_artifacts:
+          path: ~/initial_s3/tfplan
+          destination: tfplan
+      - persist_to_workspace:
+          root: ~/initial_s3
+          paths: .
+  apply:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/initial_s3
+      - run:
+          name: apply
+          command: terraform apply -input=false -auto-approve tfplan
+      - run:
+          name: show
+          command: terraform show -no-color > tfresult
+      - store_artifacts:
+          path: ~/initial_s3/tfresult
+          destination: tfresult
+
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  version: 2
+  build_deploy:
     jobs:
-      - welcome/run
+      - init
+      - plan:
+          requires:
+            - init
+      - apply:
+          requires:
+            - plan
+          filters:
+            branches:
+              only: 
+                - master
+
+      
+      
+
