@@ -1,7 +1,7 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/initial_s3
+  working_directory: initial_s3
   docker:
     - image: hashicorp/terraform:0.12.19
   environment:
@@ -10,7 +10,6 @@ defaults: &defaults
 
 jobs:
   checkout:
-    working_directory: ~/
     docker:
       - image: circleci/golang:latest
     steps:
@@ -32,13 +31,13 @@ jobs:
           name: init
           command: terraform init -input=false
       - persist_to_workspace:
-          root: ~/initial_s3
+          root: initial_s3
           paths: .
   plan:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/initial_s3
+          at: initial_s3
       - run:
           name: pwd
           command: ls -la
@@ -46,16 +45,16 @@ jobs:
           name: plan
           command: terraform plan -no-color -out=tfplan  -input=false
       - store_artifacts:
-          path: ~/initial_s3/tfplan
+          path: initial_s3/tfplan
           destination: tfplan
       - persist_to_workspace:
-          root: ~/initial_s3
+          root: initial_s3
           paths: .
   apply:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/initial_s3
+          at: initial_s3
       - run:
           name: apply
           command: terraform apply -input=false -auto-approve tfplan
@@ -63,7 +62,7 @@ jobs:
           name: show
           command: terraform show -no-color > tfresult
       - store_artifacts:
-          path: ~/initial_s3/tfresult
+          path: initial_s3/tfresult
           destination: tfresult
 
 workflows:
