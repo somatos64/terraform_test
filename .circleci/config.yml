@@ -26,7 +26,7 @@ jobs:
       #     command: echo $AWS_SECRET_KEY >> aws-creds.json
       - run:
           name: pwd
-          command: ls -la
+          command: pwd
       - run:
           name: init
           command: terraform init -input=false
