@@ -20,6 +20,9 @@ jobs:
       #     name: gcp auth
       #     command: echo $AWS_SECRET_KEY >> aws-creds.json
       - run:
+          name: pwd
+          command: pwd
+      - run:
           name: init
           command: terraform init -input=false
       - persist_to_workspace:
@@ -30,6 +33,9 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/initial_s3
+      - run:
+          name: pwd
+          command: pwd
       - run:
           name: plan
           command: terraform plan -no-color -out=tfplan  -input=false
