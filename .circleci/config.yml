@@ -10,6 +10,8 @@ defaults: &defaults
 
 jobs:
   checkout:
+    docker:
+      - image: circleci/circleci/golang:latest
     steps:
         - checkout
   init:
