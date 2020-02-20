@@ -1,0 +1,89 @@
+version: 2
+
+defaults: &defaults
+  # working_directory: initial_s3
+  docker:
+    - image: hashicorp/terraform:0.12.19
+  environment:
+    TF_IN_AUTOMATION: true
+    # AWS_SHARED_CREDENTIALS_FILE: aws-creds.json
+
+jobs:
+  checkout:
+    docker:
+      - image: circleci/golang:latest
+    steps:
+        - checkout
+        - persist_to_workspace:
+              root: initial_s3
+              paths: .
+  init:
+    <<: *defaults
+    steps:
+    
+      - attach_workspace:
+          at: initial_s3
+      - run:
+          name: init
+          command: >
+            cd initial_s3;
+            terraform init -input=false
+      - persist_to_workspace:
+          root: initial_s3
+          paths: .
+  plan:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: initial_s3
+      - run:
+          name: plan
+          command: >
+            cd initial_s3;
+            terraform plan -out=tfplan  -input=false
+      - store_artifacts:
+          path: initial_s3/tfplan
+          destination: tfplan
+      - persist_to_workspace:
+          root: initial_s3
+          paths: .
+  apply:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: initial_s3
+      # - run:
+      #     name: apply
+      #     command: terraform apply -input=false -auto-approve tfplan
+      - run:
+          name: ls
+          command: pwd; ls -la; ls -la initial_s3
+      - run:
+          name: show
+          command: terraform show -no-color > tfresult
+      - store_artifacts:
+          path: initial_s3/tfresult
+          destination: tfresult
+
+workflows:
+  version: 2
+  build_deploy:
+    jobs:
+      - checkout
+      - init:
+          requires:
+            - checkout
+      - plan:
+          requires:
+            - init
+      - apply:
+          requires:
+            - plan
+          # filters:
+          #   branches:
+          #     only: 
+          #       - master
+
+      
+      
+
